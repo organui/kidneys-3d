@@ -11,13 +11,15 @@ The user opens a standalone explorer, loads a tracked BodyParts3D GLB, selects a
 | Check                                                     | Result                                                      |
 | --------------------------------------------------------- | ----------------------------------------------------------- |
 | `bun run typecheck`                                       | Pass                                                        |
-| `bun run test`                                            | Pass: 1 file, 3 adapter/state tests                         |
+| `bun run test`                                            | Pass: 2 files, 9 adapter/state, camera, and picking tests    |
 | `bun run build`                                           | Pass: Vite production build                                 |
 | `bun run verify:model`                                    | Pass: 6 mappings, 14,390 triangles, 380,208 bytes, checksum |
 | `bun install --frozen-lockfile` in independent clean copy | Pass                                                        |
 | Clean-copy typecheck/test/model verification/build        | Pass                                                        |
 
 The production build reports a large-chunk advisory for the Three.js viewer bundle. It is a performance advisory, not a runtime or correctness failure.
+
+Six viewer regression tests use real Three.js cameras, OrbitControls, ray intersections, and the tracked GLB: preset/zoom preservation through resizes, custom orbit/target preservation, reset framing, lateral camera alignment with model coordinates, hidden foreground picking, and hidden ancestor filtering.
 
 ## Browser checks
 
@@ -36,6 +38,9 @@ Tested against the local Vite app at desktop size and a 390×844 responsive view
 | Isolate / restore              | Pass: leaf isolation produced 1/6 visible; restore returned 6/6                                                                                   |
 | Reset                          | Pass: restored all leaves, cleared selection/tour/internal tree search, and returned to Anterior                                                  |
 | Camera                         | Pass: keyboard rotation changed the label to Custom view; Posterior preset restored named state; zoom/reset controls enabled after load           |
+| Camera across layout changes   | Pass: zoomed Posterior and custom keyboard orbit survived opening the desktop anatomy panel; Posterior orientation and relative zoom survived a 390×844 resize and return to desktop |
+| Lateral presets                | Pass: clicking the foremost kidney in Patient left selected Left kidney; Patient right selected Right kidney |
+| Hidden-surface picking         | Pass: after hiding Right kidney, clicking its former surface did not select it; clicking the exposed Right ureter selected that visible structure. Tree selection of the hidden kidney remained available, and showing it restored scene picking |
 | Guided tour                    | Pass: shared selection, camera, and isolation state uses the same adapter/actions                                                                 |
 | Mobile                         | Pass: 390×844 overview and bottom anatomy sheet; no document or panel horizontal overflow                                                         |
 | Keyboard/focus                 | Pass: named header controls at mobile size, tree roving focus keys, Space visibility action, and focused-canvas arrow controls                    |
@@ -45,6 +50,8 @@ Tested against the local Vite app at desktop size and a 390×844 responsive view
 | Console                        | No application errors. React Three Fiber emitted the upstream `THREE.Clock` deprecation warning                                                   |
 
 Screenshots:
+
+These screenshots document the initial explorer layout. The camera and picking follow-up was verified separately in the production preview; no replacement screenshots were needed for these behavior changes.
 
 - `docs/screenshots/desktop.jpg`
 - `docs/screenshots/anatomy.jpg`

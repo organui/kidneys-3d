@@ -59,6 +59,8 @@ The adapter provides:
 
 Tree selection sets the app’s controlled `selectedId`; the renderer highlights every mapped scene leaf. Mesh picking writes a leaf ID back to the same controlled state and opens the anatomy panel. A hidden selection stays selected and receives a clear reveal action. Search and disclosure do not own or mutate visibility. Isolate, tour, restore, and reset all write the same visibility object.
 
+The canvas event filter excludes intersections with hidden objects or descendants of hidden ancestors. Three.js raycasting can still intersect invisible geometry, so hiding a mesh alone is insufficient: filtering before event dispatch prevents hidden foreground anatomy from selecting itself or blocking visible surfaces behind it. Hidden structures remain selectable through the text tree.
+
 Reset increments the tree instance key to clear its internal search/disclosure state along with application selection, visibility, tour, and camera state. The component remains unchanged.
 
 ## Theme setup
@@ -67,7 +69,8 @@ Reset increments the tree instance key to clear its internal search/disclosure s
 
 ## Friction and follow-up
 
-No generic registry bug prevented integration, so no upstream worktree or PR was needed. Two integration observations are worth carrying to another consumer:
+No generic registry bug prevented integration, so no upstream worktree or PR was needed. Three integration observations are worth carrying to another consumer:
 
 1. Configure the `@/*` alias before installing URL items whose registry path resolves through `@`.
 2. Search and expansion are intentionally internal. A consumer that needs programmatic search/disclosure reset can remount the component; a future API could expose those states, but this app did not fork the component to add them.
+3. Visibility must govern both rendering and scene picking. The consumer owns that filtering; it is independent of the registry tree's visibility state contract.

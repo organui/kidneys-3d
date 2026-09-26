@@ -1,4 +1,10 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import {
+  Canvas,
+  events,
+  useFrame,
+  useThree,
+  type CanvasProps,
+} from "@react-three/fiber";
 import { AlertTriangle, Box, RotateCcw } from "lucide-react";
 import {
   Component,
@@ -15,7 +21,6 @@ import {
   Mesh,
   MeshStandardMaterial,
   PerspectiveCamera,
-  Spherical,
   Vector3,
 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -23,12 +28,19 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import manifest from "../public/models/manifest.json";
 import { sceneIdsForNode } from "./anatomy-adapter";
 import { byId, structures, type StructureId, type ViewName } from "./anatomy";
+import {
+  createCameraNavigation,
+  type CameraNavigation,
+  type ViewerHandle,
+} from "./camera-navigation";
+import { visibleSceneHits } from "./scene-picking";
 
-export type ViewerHandle = {
-  preset: (view: ViewName) => void;
-  zoom: (factor: number) => void;
-  rotate: (horizontal: number, vertical?: number) => void;
-};
+export type { ViewerHandle } from "./camera-navigation";
+
+const viewerEvents: NonNullable<CanvasProps["events"]> = (store) => ({
+  ...events(store),
+  filter: visibleSceneHits,
+});
 
 type ViewerProps = {
   selectedId: string | null;
@@ -73,6 +85,7 @@ function CameraRig({
 }: Pick<ViewerProps, "controlsRef" | "onFreeView"> & { radius: number }) {
   const { camera, gl, invalidate, size } = useThree();
   const orbitRef = useRef<OrbitControls | null>(null);
+  const navigationRef = useRef<CameraNavigation | null>(null);
   const latestFreeView = useRef(onFreeView);
   latestFreeView.current = onFreeView;
 
@@ -90,12 +103,6 @@ function CameraRig({
     controls.maxDistance = radius * 5.5;
     controls.rotateSpeed = 0.6;
     controls.zoomSpeed = 0.75;
-    const perspective = camera as PerspectiveCamera;
-    const aspect = Math.max(0.3, size.width / Math.max(size.height, 1));
-    const halfFov = (perspective.fov * Math.PI) / 360;
-    const distance =
-      (radius / Math.sin(Math.atan(Math.tan(halfFov) * Math.min(aspect, 1)))) *
-      1.12;
     let interacting = false;
     const change = () => {
       if (interacting) latestFreeView.current();
@@ -111,54 +118,24 @@ function CameraRig({
     controls.addEventListener("start", start);
     controls.addEventListener("end", end);
 
-    const preset = (view: ViewName) => {
-      interacting = false;
-      controls.target.set(0, 0, 0);
-      const direction: [number, number, number] =
-        view === "Posterior"
-          ? [0, 0, -1]
-          : view === "Patient left"
-            ? [-1, 0, 0]
-            : view === "Patient right"
-              ? [1, 0, 0]
-              : [0, 0, 1];
-      camera.position.set(...direction).multiplyScalar(distance);
-      camera.lookAt(0, 0, 0);
-      controls.update();
-      invalidate();
-    };
+    const navigation = createCameraNavigation(
+      camera as PerspectiveCamera,
+      controls,
+      radius,
+      invalidate,
+      () => latestFreeView.current(),
+    );
+    navigationRef.current = navigation;
     controlsRef.current = {
-      preset,
-      zoom(factor) {
-        const offset = camera.position.clone().sub(controls.target);
-        offset.setLength(
-          Math.min(
-            controls.maxDistance,
-            Math.max(controls.minDistance, offset.length() * factor),
-          ),
-        );
-        camera.position.copy(controls.target).add(offset);
-        controls.update();
-        invalidate();
-      },
-      rotate(horizontal, vertical = 0) {
-        const spherical = new Spherical().setFromVector3(
-          camera.position.clone().sub(controls.target),
-        );
-        spherical.theta += horizontal;
-        spherical.phi += vertical;
-        spherical.makeSafe();
-        camera.position
-          .copy(controls.target)
-          .add(new Vector3().setFromSpherical(spherical));
-        controls.update();
-        latestFreeView.current();
-        invalidate();
+      ...navigation,
+      preset(view: ViewName) {
+        interacting = false;
+        navigation.preset(view);
       },
     };
-    preset("Anterior");
     return () => {
       controlsRef.current = null;
+      navigationRef.current = null;
       orbitRef.current = null;
       reducedMotion.removeEventListener("change", updateMotion);
       controls.removeEventListener("change", change);
@@ -166,6 +143,10 @@ function CameraRig({
       controls.removeEventListener("end", end);
       controls.dispose();
     };
+  }, [camera, controlsRef, gl, invalidate, radius]);
+
+  useEffect(() => {
+    navigationRef.current?.resize(size.width, size.height);
   }, [camera, controlsRef, gl, invalidate, radius, size.height, size.width]);
 
   useFrame(() => orbitRef.current?.update());
@@ -395,6 +376,7 @@ export default function Viewer(props: ViewerProps) {
         >
           <Canvas
             key={attempt}
+            events={viewerEvents}
             frameloop="demand"
             dpr={[1, 2]}
             camera={{ position: [0, 0, 12], fov: 34, near: 0.05, far: 100 }}
