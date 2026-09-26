@@ -1,0 +1,192 @@
+{
+  "dataset": "BodyParts3D",
+  "version": "4.0",
+  "variant": "PART-OF geometry archive, polygon reduction rate 99%",
+  "retrieved": "2026-09-26",
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html",
+  "credit": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+  "inputs": [
+    {
+      "file": "partof_BP3D_4.0_obj_99.zip",
+      "url": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_BP3D_4.0_obj_99.zip",
+      "sha256": "9fbc713fffeee924a5a657d9813d84d7eb957bded63adb854931dd5e3eb61c97"
+    },
+    {
+      "file": "partof_element_parts.txt",
+      "url": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_element_parts.txt",
+      "sha256": "3f5f6df1028eb122b30de77c711597b6bb8e5541658e5985859fd228adbf88ea"
+    },
+    {
+      "file": "partof_parts_list_e.txt",
+      "url": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_parts_list_e.txt",
+      "sha256": "9224080557053e6f1322f1e13ab27f0ecde0db19bb3b505f0631afad230eeebd"
+    },
+    {
+      "file": "partof_inclusion_relation_list.txt",
+      "url": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_inclusion_relation_list.txt",
+      "sha256": "1b40738270931e3c1d955ce34e0fce0d8d10d8c5ad543463e40b4b4c0243007c"
+    }
+  ],
+  "transform": {
+    "sourceBoundsMm": {
+      "min": [
+        -87.5754,
+        -120.307,
+        811.203
+      ],
+      "max": [
+        90.383,
+        -59.5914,
+        1090.44
+      ]
+    },
+    "centerMm": [
+      1.4037999999999968,
+      -89.9492,
+      950.8215
+    ],
+    "scale": 0.025,
+    "axes": "[x, z, -y]"
+  },
+  "runtime": {
+    "file": "kidneys.glb",
+    "bytes": 380208,
+    "sha256": "124f92d7c110071f18b0b765dc5ada53ec845fa9ce6981cd684e6ec6a60dd3c0"
+  },
+  "structures": [
+    {
+      "id": "right-kidney",
+      "fma": "FMA7204",
+      "sourceName": "right kidney",
+      "sources": [
+        {
+          "element": "FJ3147",
+          "bytes": 139399,
+          "sha256": "e21e2ebd5224b1cbf8caabbf4fa788d894819a328a006dcdb2eb8aa6eee5875a",
+          "vertices": 1163,
+          "triangles": 2310
+        }
+      ]
+    },
+    {
+      "id": "left-kidney",
+      "fma": "FMA7205",
+      "sourceName": "left kidney",
+      "sources": [
+        {
+          "element": "FJ3145",
+          "bytes": 182279,
+          "sha256": "b52066a987f767ad9e5c3092958bf5dd760d9f05f1497d1fc7f7ff11539bdfd2",
+          "vertices": 1497,
+          "triangles": 2982
+        }
+      ]
+    },
+    {
+      "id": "right-ureter",
+      "fma": "FMA15571",
+      "sourceName": "right ureter",
+      "sources": [
+        {
+          "element": "FJ3146",
+          "bytes": 125120,
+          "sha256": "780889608ce700962d98be95432f94d58ca121b240099adeb83d8278ca8a779d",
+          "vertices": 1132,
+          "triangles": 1924
+        }
+      ]
+    },
+    {
+      "id": "left-ureter",
+      "fma": "FMA15572",
+      "sourceName": "left ureter",
+      "sources": [
+        {
+          "element": "FJ3144",
+          "bytes": 127602,
+          "sha256": "1235a492a66c738eceafaafa512def0ed82785741367a29835aae2fdb706d59a",
+          "vertices": 1125,
+          "triangles": 2062
+        }
+      ]
+    },
+    {
+      "id": "right-renal-artery",
+      "fma": "FMA14752",
+      "sourceName": "right renal artery",
+      "sources": [
+        {
+          "element": "FJ2038",
+          "bytes": 13011,
+          "sha256": "9224463ef0a139b1e97cff5a0b83f3e7e5d16a0247f6d929627c48fb862378f2",
+          "vertices": 124,
+          "triangles": 206
+        },
+        {
+          "element": "FJ3576",
+          "bytes": 16440,
+          "sha256": "6991e362e8e203efc572aabf8a542b95574d850b6ff16518de7e51d970f4174e",
+          "vertices": 145,
+          "triangles": 282
+        },
+        {
+          "element": "FJ3581",
+          "bytes": 30184,
+          "sha256": "00896e3b9da9900822733640ae94ff19265665a67b44d845a93d614a2a729a77",
+          "vertices": 280,
+          "triangles": 468
+        },
+        {
+          "element": "FJ3582",
+          "bytes": 39279,
+          "sha256": "e73ade72f7f868af514bab99ba626e98e496995fa55972ba9a4f310f3242bf1d",
+          "vertices": 365,
+          "triangles": 606
+        },
+        {
+          "element": "FJ3584",
+          "bytes": 58365,
+          "sha256": "445644cb2d0342f24978aed1743e32b2ece4100a9050eded56537263db07cc9f",
+          "vertices": 606,
+          "triangles": 754
+        }
+      ]
+    },
+    {
+      "id": "left-renal-artery",
+      "fma": "FMA14753",
+      "sourceName": "left renal artery",
+      "sources": [
+        {
+          "element": "FJ2046",
+          "bytes": 17693,
+          "sha256": "d6d46221e140447706f7aa8cad5c78b41c9a8b93f309365530e2b59e4b6dd1c5",
+          "vertices": 166,
+          "triangles": 288
+        },
+        {
+          "element": "FJ3467",
+          "bytes": 75239,
+          "sha256": "5ffb5fe2556d31c2ea4778611ce4e2d89b78c10aaef302e3b51c111d430e7b23",
+          "vertices": 810,
+          "triangles": 954
+        },
+        {
+          "element": "FJ3476",
+          "bytes": 14817,
+          "sha256": "21dde47eb9f3d68e9fd321c88292940914868e67d70b53a0e09030ac194cc699",
+          "vertices": 132,
+          "triangles": 258
+        },
+        {
+          "element": "FJ3481",
+          "bytes": 89031,
+          "sha256": "574b3b363b93b8a542259336d6fed632db907251a39e7b19332a7ee207f4de4a",
+          "vertices": 868,
+          "triangles": 1296
+        }
+      ]
+    }
+  ]
+}
