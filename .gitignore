@@ -34,3 +34,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local verification screenshots are copied selectively into docs/screenshots
+.verification/
