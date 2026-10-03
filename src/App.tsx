@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -71,6 +71,7 @@ export default function App() {
   const [announcement, setAnnouncement] = useState("");
   const controls = useRef<ViewerHandle | null>(null);
   const about = useRef<HTMLDialogElement>(null);
+  const viewPicker = useRef<HTMLDetailsElement>(null);
   const selectedLeaves = useMemo(
     () => sceneIdsForNode(selectedId),
     [selectedId],
@@ -90,6 +91,27 @@ export default function App() {
   const selectedVisibility = selectedNode
     ? visibilityState(selectedNode, visibility)
     : true;
+  const selectedName = selected?.name ?? selectedGroup?.name;
+  const shownCount = visibleCount(visibility);
+
+  useEffect(() => {
+    // Dismiss the view menu like a native menu: outside press or Escape.
+    function dismiss(event: PointerEvent | KeyboardEvent) {
+      const picker = viewPicker.current;
+      if (!picker?.open) return;
+      if (event instanceof KeyboardEvent) {
+        if (event.key !== "Escape") return;
+        picker.open = false;
+        picker.querySelector("summary")?.focus();
+      } else if (!picker.contains(event.target as Node)) picker.open = false;
+    }
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", dismiss);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", dismiss);
+    };
+  }, []);
 
   function choose(id: string) {
     setSelectedId(id);
@@ -124,6 +146,12 @@ export default function App() {
   function setPreset(next: ViewName) {
     controls.current?.preset(next);
     setView(next);
+    if (viewPicker.current) viewPicker.current.open = false;
+  }
+
+  function clearSelection() {
+    setSelectedId(null);
+    setAnnouncement("Selection cleared.");
   }
 
   function startTour(index: number) {
@@ -142,9 +170,7 @@ export default function App() {
     const next = normalizeVisibility(visibility);
     for (const id of selectedLeaves) next[id] = show;
     setVisibility(next);
-    setAnnouncement(
-      `${selected?.name ?? selectedGroup?.name} ${show ? "shown" : "hidden"}.`,
-    );
+    setAnnouncement(`${selectedName} ${show ? "shown" : "hidden"}.`);
   }
 
   return (
@@ -209,9 +235,9 @@ export default function App() {
           <div className="scene-status">
             <span className={`status-dot ${ready ? "" : "pending"}`} />
             {ready
-              ? `${visibleCount(visibility)} of ${structures.length} structures visible`
-              : "Anatomy text always available"}
-            {visibleCount(visibility) < structures.length ? (
+              ? `${shownCount} of ${structures.length} structures visible`
+              : "Loading model · anatomy text available"}
+            {shownCount < structures.length ? (
               <button onClick={restore}>Restore all</button>
             ) : null}
           </div>
@@ -224,24 +250,19 @@ export default function App() {
                   style={{ background: selected.color }}
                 />
               ) : null}
-              <button onClick={() => setPanelOpen(true)}>
-                {selected?.name ?? selectedGroup?.name}
-              </button>
+              <button onClick={() => setPanelOpen(true)}>{selectedName}</button>
               {selectedVisibility === false ? (
-                <EyeOff size={13} />
+                <EyeOff size={13} aria-label="Hidden" />
               ) : (
-                <Check size={13} />
+                <Check size={13} aria-hidden="true" />
               )}
-              <button
-                aria-label="Clear selection"
-                onClick={() => setSelectedId(null)}
-              >
+              <button aria-label="Clear selection" onClick={clearSelection}>
                 <X size={14} />
               </button>
             </div>
           ) : null}
 
-          {visibleCount(visibility) === 0 ? (
+          {shownCount === 0 ? (
             <div className="empty-scene">
               <EyeOff size={23} />
               <p>Every represented structure is hidden.</p>
@@ -252,7 +273,7 @@ export default function App() {
           ) : null}
 
           <div className="camera-bar" aria-label="Camera controls">
-            <details className="view-picker">
+            <details className="view-picker" ref={viewPicker}>
               <summary>
                 {view}
                 <ChevronDown size={14} />
@@ -330,12 +351,12 @@ export default function App() {
                 <span className="eyebrow">
                   {selected?.group ?? "INTERFACE GROUP"}
                 </span>
-                <h3>{selected?.name ?? selectedGroup?.name}</h3>
+                <h3>{selectedName}</h3>
                 <p>{selected?.description ?? selectedGroup?.description}</p>
                 {selected ? (
                   <p className="source-id">
                     BodyParts3D · {selected.fma} · patient{" "}
-                    {selected.name.startsWith("Right") ? "right" : "left"}
+                    {selected.id.startsWith("right-") ? "right" : "left"}
                   </p>
                 ) : null}
                 <div className="structure-actions">
@@ -350,9 +371,7 @@ export default function App() {
                   <button
                     onClick={() => {
                       setVisibility(isolateNode(selectedId));
-                      setAnnouncement(
-                        `${selected?.name ?? selectedGroup?.name} isolated.`,
-                      );
+                      setAnnouncement(`${selectedName} isolated.`);
                     }}
                   >
                     <Focus size={14} /> Isolate
@@ -364,9 +383,10 @@ export default function App() {
                 {selectedVisibility !== true ? (
                   <button
                     className="reveal-link"
-                    onClick={() =>
-                      setVisibility(revealNode(selectedId, visibility))
-                    }
+                    onClick={() => {
+                      setVisibility(revealNode(selectedId, visibility));
+                      setAnnouncement(`${selectedName} revealed.`);
+                    }}
                   >
                     Reveal selected structure
                   </button>
