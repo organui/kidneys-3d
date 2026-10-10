@@ -20,10 +20,16 @@ function setupCamera(width = 1280, height = 520) {
   const controls = new OrbitControls(camera);
   controls.minDistance = 4 * 1.15;
   const onFreeView = vi.fn();
+  // Points on a radius-4 sphere stand in for the model surface.
+  const points = [-1, 1].flatMap((sign) => [
+    new Vector3(sign * 4, 0, 0),
+    new Vector3(0, sign * 4, 0),
+    new Vector3(0, 0, sign * 4),
+  ]);
   const navigation = createCameraNavigation(
     camera,
     controls,
-    4,
+    points,
     vi.fn(),
     onFreeView,
   );

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,9 +9,9 @@ import {
   EyeOff,
   Focus,
   Info,
-  Menu,
   Minus,
   PanelRightClose,
+  PanelRightOpen,
   Plus,
   RotateCcw,
   X,
@@ -72,6 +72,9 @@ export default function App() {
   const controls = useRef<ViewerHandle | null>(null);
   const about = useRef<HTMLDialogElement>(null);
   const viewPicker = useRef<HTMLDetailsElement>(null);
+  const anatomyPanel = useRef<HTMLElement>(null);
+  const panelToggle = useRef<HTMLButtonElement>(null);
+  const focusPanel = useRef(false);
   const selectedLeaves = useMemo(
     () => sceneIdsForNode(selectedId),
     [selectedId],
@@ -112,6 +115,32 @@ export default function App() {
       document.removeEventListener("keydown", dismiss);
     };
   }, []);
+
+  useLayoutEffect(() => {
+    if (!panelOpen || !focusPanel.current) return;
+    focusPanel.current = false;
+    anatomyPanel.current?.focus({ preventScroll: true });
+    if (matchMedia("(max-width: 760px)").matches) {
+      anatomyPanel.current?.scrollIntoView({
+        behavior: "instant",
+        block: "start",
+      });
+    }
+  }, [panelOpen]);
+
+  function openPanel() {
+    if (panelOpen) {
+      anatomyPanel.current?.focus();
+      return;
+    }
+    focusPanel.current = true;
+    setPanelOpen(true);
+  }
+
+  function closePanel() {
+    setPanelOpen(false);
+    panelToggle.current?.focus();
+  }
 
   function choose(id: string) {
     setSelectedId(id);
@@ -178,7 +207,10 @@ export default function App() {
       <a
         href="#anatomy-panel"
         className="skip-link"
-        onClick={() => setPanelOpen(true)}
+        onClick={(event) => {
+          event.preventDefault();
+          openPanel();
+        }}
       >
         Skip to anatomy text
       </a>
@@ -208,9 +240,14 @@ export default function App() {
             }
             aria-expanded={panelOpen}
             aria-controls="anatomy-panel"
-            onClick={() => setPanelOpen((open) => !open)}
+            ref={panelToggle}
+            onClick={panelOpen ? closePanel : openPanel}
           >
-            {panelOpen ? <PanelRightClose size={17} /> : <Menu size={17} />}
+            {panelOpen ? (
+              <PanelRightClose size={17} />
+            ) : (
+              <PanelRightOpen size={17} />
+            )}
             <span>Anatomy</span>
           </button>
         </nav>
@@ -224,10 +261,7 @@ export default function App() {
           <Viewer
             selectedId={selectedId}
             visibility={visibility}
-            onSelect={(id) => {
-              choose(id);
-              setPanelOpen(true);
-            }}
+            onSelect={choose}
             onReady={setReady}
             onFreeView={() => setView("Custom view")}
             controlsRef={controls}
@@ -250,7 +284,7 @@ export default function App() {
                   style={{ background: selected.color }}
                 />
               ) : null}
-              <button onClick={() => setPanelOpen(true)}>{selectedName}</button>
+              <button onClick={openPanel}>{selectedName}</button>
               {selectedVisibility === false ? (
                 <EyeOff size={13} aria-label="Hidden" />
               ) : (
@@ -331,16 +365,22 @@ export default function App() {
           id="anatomy-panel"
           className="anatomy-panel"
           aria-hidden={!panelOpen}
+          aria-label="Anatomy and exploration"
+          tabIndex={-1}
+          ref={anatomyPanel}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              closePanel();
+            }
+          }}
         >
           <div className="panel-heading">
             <div>
               <span className="eyebrow">STRUCTURE EXPLORER</span>
               <h2>Anatomy</h2>
             </div>
-            <button
-              aria-label="Close anatomy panel"
-              onClick={() => setPanelOpen(false)}
-            >
+            <button aria-label="Close anatomy panel" onClick={closePanel}>
               <X size={18} />
             </button>
           </div>

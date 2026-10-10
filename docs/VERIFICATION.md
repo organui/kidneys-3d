@@ -81,3 +81,7 @@ Reviewed after implementation using the React best-practices checklist. Stable d
 - No independent clinical anatomy expert reviewed the selected source subset or descriptions.
 - WebGL context-loss handling was reviewed in code but not forced through a browser/driver failure mode.
 - The upstream Three.js clock deprecation warning remains until React Three Fiber updates its internal timing API.
+
+## Cross-explorer consistency pass (10 October 2026)
+
+Selection, framing and the anatomy panel now behave the same in all five OrganUI explorers (brain, heart, kidneys, liver, lungs), using the heart explorer as the reference. A selection lifts the chosen structure in its own color and ghosts the rest to 22% opacity, toned toward the canvas. Every named view is framed by `src/framing.ts`, which fits sampled surface points to the view at a shared 80% fill. The panel starts closed, opens from the header Anatomy button with focus moved into it, and Escape closes it and returns focus to that button. Checked in headless Chromium (SwiftShader WebGL) at 1440×900 and 390×844, with typecheck, tests and build passing.

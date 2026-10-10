@@ -17,6 +17,7 @@ import {
 } from "react";
 import {
   Box3,
+  Color,
   Group,
   Mesh,
   MeshStandardMaterial,
@@ -34,6 +35,7 @@ import {
   type ViewerHandle,
 } from "./camera-navigation";
 import { visibleSceneHits } from "./scene-picking";
+import { surfacePoints } from "./framing";
 
 export type { ViewerHandle } from "./camera-navigation";
 
@@ -82,7 +84,11 @@ function CameraRig({
   controlsRef,
   onFreeView,
   radius,
-}: Pick<ViewerProps, "controlsRef" | "onFreeView"> & { radius: number }) {
+  points,
+}: Pick<ViewerProps, "controlsRef" | "onFreeView"> & {
+  radius: number;
+  points: Vector3[];
+}) {
   const { camera, gl, invalidate, size } = useThree();
   const orbitRef = useRef<OrbitControls | null>(null);
   const navigationRef = useRef<CameraNavigation | null>(null);
@@ -121,7 +127,7 @@ function CameraRig({
     const navigation = createCameraNavigation(
       camera as PerspectiveCamera,
       controls,
-      radius,
+      points,
       invalidate,
       () => latestFreeView.current(),
     );
@@ -143,14 +149,34 @@ function CameraRig({
       controls.removeEventListener("end", end);
       controls.dispose();
     };
-  }, [camera, controlsRef, gl, invalidate, radius]);
+  }, [camera, controlsRef, gl, invalidate, radius, points]);
 
   useEffect(() => {
     navigationRef.current?.resize(size.width, size.height);
-  }, [camera, controlsRef, gl, invalidate, radius, size.height, size.width]);
+  }, [
+    camera,
+    controlsRef,
+    gl,
+    invalidate,
+    radius,
+    points,
+    size.height,
+    size.width,
+  ]);
 
   useFrame(() => orbitRef.current?.update());
   return null;
+}
+
+const stageTone = new Color("#e4e3dc");
+const ghosts = new Map<string, string>();
+function ghostColor(color: string) {
+  let value = ghosts.get(color);
+  if (!value) {
+    value = "#" + new Color(color).lerp(stageTone, 0.5).getHexString();
+    ghosts.set(color, value);
+  }
+  return value;
 }
 
 function Model({
@@ -175,10 +201,18 @@ function Model({
       if (!structure) return;
       object.visible = visibility[id] !== false;
       const material = object.material as MeshStandardMaterial;
-      material.color.set(structure.color);
-      material.emissive.set(highlighted.has(id) ? "#f0aa79" : "#000000");
-      material.emissiveIntensity = highlighted.has(id) ? 0.34 : 0;
+      // A selection ghosts everything else so it reads from any view.
+      const ghosted = highlighted.size > 0 && !highlighted.has(id);
+      material.color.set(
+        ghosted ? ghostColor(structure.color) : structure.color,
+      );
+      material.emissive.set(highlighted.has(id) ? structure.color : "#000000");
+      material.emissiveIntensity = highlighted.has(id) ? 0.35 : 0;
+      material.transparent = ghosted;
+      material.opacity = ghosted ? 0.22 : 1;
+      material.depthWrite = !ghosted;
       material.roughness = 0.66;
+      material.needsUpdate = true;
     });
     invalidate();
   }, [highlighted, invalidate, model, visibility]);
@@ -295,6 +329,7 @@ export default function Viewer(props: ViewerProps) {
         : 4,
     [model],
   );
+  const points = useMemo(() => (model ? surfacePoints(model) : []), [model]);
   const retry = () => {
     setGraphicsFailed(false);
     setAttempt((value) => value + 1);
@@ -416,6 +451,7 @@ export default function Viewer(props: ViewerProps) {
               controlsRef={props.controlsRef}
               onFreeView={props.onFreeView}
               radius={radius}
+              points={points}
             />
           </Canvas>
         </GraphicsBoundary>

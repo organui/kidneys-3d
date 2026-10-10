@@ -120,7 +120,8 @@
   input:focus-visible,
   summary:focus-visible,
   .canvas-wrap:focus-visible,
-  dialog:focus-visible {
+  dialog:focus-visible,
+  .anatomy-panel:focus-visible {
     outline: 2px solid #696e65;
     outline-offset: 3px;
   }
@@ -659,9 +660,6 @@ footer a {
   }
   .panel-toggle {
     padding-inline: 9px;
-  }
-  .panel-toggle span {
-    display: none;
   }
   .explorer,
   .explorer.panel-open {
