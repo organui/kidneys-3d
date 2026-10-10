@@ -22,7 +22,7 @@ The app provides:
 
 ## Run locally
 
-Requirements: [Bun 1.4.2](https://bun.sh/) and a current browser with WebGL.
+Requirements: [Bun 1.4.2](https://bun.sh/) and a current browser with WebGL. Older Bun releases (for example 1.3.x) cannot read the lockfile format and fail `--frozen-lockfile`.
 
 ```sh
 bun install --frozen-lockfile
