@@ -4,19 +4,19 @@ This app consumes the real public OrganUI registry item and keeps the installed 
 
 ## Exact installation
 
-The current installed source is the `anatomy-tree` item from OrganUI PR #12 (branch commit `d6b36d0`, not yet merged), reinstalled on 2026-10-16. `organui.com` and `ui.shadcn.com` are blocked in the build sandbox, so the built registry item from that commit was served locally and installed with the same CLI:
+The current installed source is the `anatomy-tree` item from OrganUI PR #12 (branch commit `b8e6451`, not yet merged), reinstalled on 2026-10-16. `organui.com` and `ui.shadcn.com` are blocked in the build sandbox, so the built registry item from that commit was served locally and installed with the same CLI:
 
 ```sh
-REGISTRY_URL=http://127.0.0.1:4411 bunx shadcn@4.21.0 add http://127.0.0.1:4411/anatomy-tree.json -y -o
+REGISTRY_URL=http://127.0.0.1:4412 bunx shadcn@4.21.0 add http://127.0.0.1:4412/anatomy-tree.json -y -o
 ```
 
 After PR #12 merges, re-run the install against `https://organui.com/r/anatomy-tree.json` and confirm the checksums below still match; until then this install is from an unmerged commit, not the public registry.
 
 | Artifact                                     | SHA-256                                                            |
 | -------------------------------------------- | ------------------------------------------------------------------ |
-| Served `anatomy-tree.json`                   | `32fbc477ece5f02ac135dbf0a5b4c059c37fc2ca9abc8982641b55c080cc9b30` |
-| Embedded source (`files[0].content`)         | `cb0ebd637b64a9813ba1139560315024b315580ad04e5df6eca3b3d1bb4844c0` |
-| Tracked `src/components/ui/anatomy-tree.tsx` | `dc14798adfbdcaef505cbe05e2ca92a6a3aae6164465d06e8d4d99cd415efab2` |
+| Served `anatomy-tree.json`                   | `719c1547afb1453e809ee1b2fca0dc99858083aa3ff712477a493c77e8f5f389` |
+| Embedded source (`files[0].content`)         | `14709d69270066ebb4677e736d71fa59c2ec9cf9c1f0e1a6a8236795633944cd` |
+| Tracked `src/components/ui/anatomy-tree.tsx` | `3d5554cdc179f1ad778fd6321cc1414c293c4cca0535efd9aab679c686893538` |
 
 The first install (2026-09-26, `bunx shadcn@4.21.0 add https://organui.com/r/anatomy-tree.json -y`, served JSON `de73f92f…14a7`, installed file `bf82b428…7117`) came from the public registry; this reinstall replaces it.
 

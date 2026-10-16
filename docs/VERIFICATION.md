@@ -88,7 +88,7 @@ Selection, framing and the anatomy panel now behave the same in all five OrganUI
 
 ## Anatomy-tree reinstall (16 October 2026)
 
-Reinstalled `anatomy-tree` from OrganUI PR #12 (commit `d6b36d0`, served locally; see the registry integration guide) and adopted its new node options: leaf colour swatches matching the mesh colours, and expand-only `group-*` rows. Clean `bun install --frozen-lockfile`, typecheck, 10 tests, model verification, production build and Prettier check pass. Browser checks used headless Chromium (SwiftShader WebGL) through Playwright against the production preview at 1440×900 and 390×844:
+Reinstalled `anatomy-tree` from OrganUI PR #12 (commit `b8e6451`, served locally; see the registry integration guide) and adopted its new node options: leaf colour swatches matching the mesh colours, and expand-only `group-*` rows. Clean `bun install --frozen-lockfile`, typecheck, 10 tests, model verification, production build and Prettier check pass. Browser checks used headless Chromium (SwiftShader WebGL) through Playwright against the production preview at 1440×900 and 390×844:
 
 | Behavior                                                                                                                | Result                                                                                      |
 | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
