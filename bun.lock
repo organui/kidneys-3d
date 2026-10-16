@@ -5,7 +5,7 @@
     "": {
       "name": "@organui/kidneys",
       "dependencies": {
-        "@base-ui/react": "^1.8.0",
+        "@base-ui/react": "1.8.0",
         "@fontsource-variable/dm-sans": "5.3.0",
         "@fontsource-variable/manrope": "5.3.0",
         "@react-three/fiber": "9.7.0",

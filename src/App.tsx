@@ -20,6 +20,7 @@ import { AnatomyTree, visibilityState } from "./components/ui/anatomy-tree";
 import {
   allStructureIds,
   isolateNode,
+  treeData,
   normalizeVisibility,
   revealNode,
   sceneIdsForNode,
@@ -446,7 +447,7 @@ export default function App() {
 
           <AnatomyTree
             key={treeVersion}
-            data={anatomyTree}
+            data={treeData}
             selectedId={selectedId}
             onSelectionChange={choose}
             visibility={visibility}

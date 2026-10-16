@@ -3,10 +3,34 @@ import {
   leafIds,
   type AnatomyNode,
 } from "./components/ui/anatomy-tree";
-import { anatomyTree, structures, type StructureId } from "./anatomy";
+import { anatomyTree, byId, structures, type StructureId } from "./anatomy";
 
 const structureIds = new Set<string>(structures.map(({ id }) => id));
 const { nodes, parents } = anatomyIndex(anatomyTree);
+
+/** Interface groupings have no single structure to select. */
+export function isInterfaceGroup(id: string): boolean {
+  return id.startsWith("group-");
+}
+
+/**
+ * The hierarchy as the registry tree receives it: each scene leaf carries the
+ * same colour as its mesh, and interface groups expand instead of selecting.
+ */
+export function treeNodes(data: readonly AnatomyNode[]): AnatomyNode[] {
+  return data.map((node) => {
+    const structure =
+      node.id in byId ? byId[node.id as StructureId] : undefined;
+    return {
+      ...node,
+      ...(structure ? { color: structure.color } : {}),
+      ...(isInterfaceGroup(node.id) ? { selectable: false } : {}),
+      ...(node.children ? { children: treeNodes(node.children) } : {}),
+    };
+  });
+}
+
+export const treeData = treeNodes(anatomyTree);
 
 export const allStructureIds = structures.map(({ id }) => id);
 
