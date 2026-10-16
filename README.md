@@ -38,7 +38,7 @@ bun run test
 bun run build
 ```
 
-The text `bun.lock`, installed registry source, and runtime GLB are committed. An ordinary clean checkout does not require the OrganUI registry, neighboring repositories, or BodyParts3D downloads.
+The text `bun.lock`, installed registry source, and runtime GLB are committed. The installed anatomy-tree source currently comes from OrganUI PR #12 (unmerged, installed from a locally served copy of its registry item); see the [registry integration guide](docs/REGISTRY_INTEGRATION.md). An ordinary clean checkout does not require the OrganUI registry, neighboring repositories, or BodyParts3D downloads.
 
 ## Rebuild the model
 

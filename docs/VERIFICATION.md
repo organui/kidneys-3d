@@ -85,3 +85,20 @@ Reviewed after implementation using the React best-practices checklist. Stable d
 ## Cross-explorer consistency pass (10 October 2026)
 
 Selection, framing and the anatomy panel now behave the same in all five OrganUI explorers (brain, heart, kidneys, liver, lungs), using the heart explorer as the reference. A selection lifts the chosen structure in its own color and ghosts the rest to 22% opacity, toned toward the canvas. Every named view is framed by `src/framing.ts`, which fits sampled surface points to the view at a shared 80% fill. The panel starts closed, opens from the header Anatomy button with focus moved into it, and Escape closes it and returns focus to that button. Checked in headless Chromium (SwiftShader WebGL) at 1440×900 and 390×844, with typecheck, tests and build passing.
+
+## Anatomy-tree reinstall (16 October 2026)
+
+Reinstalled `anatomy-tree` from OrganUI PR #12 (commit `b8e6451`, served locally; see the registry integration guide) and adopted its new node options: leaf colour swatches matching the mesh colours, and expand-only `group-*` rows. Clean `bun install --frozen-lockfile`, typecheck, 10 tests, model verification, production build and Prettier check pass. Browser checks used headless Chromium (SwiftShader WebGL) through Playwright against the production preview at 1440×900 and 390×844:
+
+| Behavior                                                                                                                | Result                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Colour swatches                                                                                                         | Pass: each leaf swatch equals its structure/mesh colour; group rows have none               |
+| Group click or Enter                                                                                                    | Pass: expands or collapses the group, selection unchanged, no `aria-selected` on group rows |
+| 3D pick of the right kidney with the Kidneys group collapsed                                                            | Pass: group expands, row selected and in view in the panel                                  |
+| Search + select, hide leaf (group mixed), show/hide group                                                               | Pass                                                                                        |
+| Reset                                                                                                                   | Pass: clears search, expansion, visibility and selection                                    |
+| Tour step on a group                                                                                                    | Pass: group selected through the app; chip and card shown                                   |
+| Panel closed by default, focus into panel, Escape return, chip opens panel, view label stays a named view after a click | Pass                                                                                        |
+| Horizontal overflow at 390 px, console errors                                                                           | None                                                                                        |
+
+`docs/screenshots/anatomy.jpg` and `docs/screenshots/mobile-anatomy.jpg` were regenerated from this run.
