@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
+  ArrowUpRight,
   BookOpen,
   Check,
   ChevronDown,
@@ -40,25 +42,25 @@ const groupCopy: Record<string, { name: string; description: string }> = {
   "group-kidneys": {
     name: "Kidneys",
     description:
-      "The paired kidney surface meshes are anatomical structures. Their grouping here reflects the pair, not a larger enclosing tissue.",
+      "Two bean-shaped organs on the back wall of the abdomen that filter blood, balance water and salts, and make urine.",
   },
   "group-urinary-tract": {
-    name: "Urinary tract · represented",
+    name: "Urinary tract",
     description:
-      "An interface grouping for the two represented ureters. The bladder and urethra are not included in this release.",
+      "The two ureters carry urine from the kidneys to the bladder. The bladder and urethra are shown in the bladder explorer.",
   },
   "group-arterial-supply": {
-    name: "Arterial supply · represented",
+    name: "Renal arteries",
     description:
-      "An interface grouping for the represented left and right renal artery elements. It is not anatomical containment within kidney tissue.",
+      "The right and left renal arteries branch from the aorta and enter each kidney at its hilum.",
   },
 };
 
 const views: ViewName[] = [
   "Anterior",
   "Posterior",
-  "Patient left",
-  "Patient right",
+  "Left lateral",
+  "Right lateral",
 ];
 
 export default function App() {
@@ -218,7 +220,7 @@ export default function App() {
       <header className="site-header">
         <a href="./" className="brand" aria-label="OrganUI Kidneys home">
           <span className="brand-mark" aria-hidden="true">
-            ◖◗
+            <Activity size={21} strokeWidth={1.6} />
           </span>
           <span>
             Organ<span className="brand-light">UI</span>
@@ -395,6 +397,9 @@ export default function App() {
                 <h3>{selectedName}</h3>
                 <p>{selected?.description ?? selectedGroup?.description}</p>
                 {selected ? (
+                  <p className="structure-note">{selected.note}</p>
+                ) : null}
+                {selected ? (
                   <p className="source-id">
                     BodyParts3D · {selected.fma} · patient{" "}
                     {selected.id.startsWith("right-") ? "right" : "left"}
@@ -480,7 +485,7 @@ export default function App() {
             </div>
             <p>
               {tourStep === null
-                ? "Four short stops explain what the source geometry does—and does not—show."
+                ? "Four short stops explain what the source geometry does and does not show."
                 : tour[tourStep].text}
             </p>
             <div className="tour-controls">
@@ -525,10 +530,17 @@ export default function App() {
       </main>
 
       <footer>
-        <span>Educational anatomy interface · not clinically validated</span>
-        <a href={referenceUrl} target="_blank" rel="noreferrer">
-          Anatomy reference
-        </a>
+        <span>Educational model</span>
+        <span>
+          Model:{" "}
+          <a
+            href="https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            BodyParts3D / DBCLS · CC BY 4.0 <ArrowUpRight size={11} />
+          </a>
+        </span>
       </footer>
       <div className="sr-only" aria-live="polite">
         {announcement}
@@ -559,14 +571,19 @@ export default function App() {
           elements.
         </p>
         <p>
-          It does not show internal renal anatomy, a cutaway, urine flow,
-          surrounding organs, or patient-specific imaging. Colors are
+          It does not show internal renal anatomy, a cutaway, urine flow, the
+          aorta, surrounding organs, or patient-specific imaging. Colors are
           illustrative. Developer source and geometry checks are complete;
           independent anatomical expert review is not.
         </p>
         <p className="attribution">
           BodyParts3D, © The Database Center for Life Science, licensed under CC
           Attribution 4.0 International.
+        </p>
+        <p>
+          <a href={referenceUrl} target="_blank" rel="noreferrer">
+            Read how the urinary tract works (NIDDK)
+          </a>
         </p>
         <a
           className="primary-action"

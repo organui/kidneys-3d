@@ -99,8 +99,8 @@ describe("camera layout changes", () => {
     const model = await new NodeIO().read("public/models/kidneys.glb");
     const { camera, navigation } = setupCamera();
     for (const [view, id] of [
-      ["Patient left", "left-kidney"],
-      ["Patient right", "right-kidney"],
+      ["Left lateral", "left-kidney"],
+      ["Right lateral", "right-kidney"],
     ] as const) {
       const node = model
         .getRoot()

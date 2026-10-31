@@ -34,9 +34,9 @@ export function createCameraNavigation(
     return new Vector3(
       ...((view === "Posterior"
         ? [0, 0, -1]
-        : view === "Patient left"
+        : view === "Left lateral"
           ? [1, 0, 0]
-          : view === "Patient right"
+          : view === "Right lateral"
             ? [-1, 0, 0]
             : [0, 0, 1]) as [number, number, number]),
     );
