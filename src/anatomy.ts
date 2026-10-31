@@ -16,6 +16,7 @@ export type Structure = {
   color: string;
   group: "Kidneys" | "Urinary tract" | "Arterial supply";
   description: string;
+  note: string;
 };
 
 export const structures: readonly Structure[] = [
@@ -27,7 +28,8 @@ export const structures: readonly Structure[] = [
     color: "#9f4e45",
     group: "Kidneys",
     description:
-      "The patient’s right kidney is one of the paired organs that filter blood and produce urine. In this source body it sits slightly lower than the left kidney.",
+      "One of the two bean-shaped organs that filter blood and make urine. It sits a little lower than the left kidney because the liver lies above it.",
+    note: "One surface mesh. The cortex, medulla and renal pelvis inside it are not separate structures.",
   },
   {
     id: "left-kidney",
@@ -37,7 +39,8 @@ export const structures: readonly Structure[] = [
     color: "#b56256",
     group: "Kidneys",
     description:
-      "The patient’s left kidney is shown in its source alignment beside the spine. This surface mesh does not expose cortex, medulla, or the renal pelvis.",
+      "Lies against the back wall of the abdomen beside the spine, a little higher than the right kidney. Its vessels and ureter leave from the hilum on its inner border.",
+    note: "One surface mesh. The cortex, medulla and renal pelvis inside it are not separate structures.",
   },
   {
     id: "right-ureter",
@@ -47,7 +50,8 @@ export const structures: readonly Structure[] = [
     color: "#d09b73",
     group: "Urinary tract",
     description:
-      "The right ureter is the narrow muscular tube that carries urine from the right kidney toward the bladder. The bladder is outside this release’s represented scope.",
+      "A narrow muscular tube, about 25 to 30 cm long, that carries urine from the right kidney down to the bladder by waves of contraction.",
+    note: "Shown down to where the source ends it, just above the bladder. The bladder is shown in the bladder explorer.",
   },
   {
     id: "left-ureter",
@@ -57,7 +61,8 @@ export const structures: readonly Structure[] = [
     color: "#dcad86",
     group: "Urinary tract",
     description:
-      "The left ureter descends from the left kidney toward the bladder. Its lower end is truncated here because the bladder is not included in the selected geometry.",
+      "Carries urine from the left kidney to the bladder. It runs down over the psoas muscle and crosses into the pelvis near the split of the common iliac artery.",
+    note: "Shown down to where the source ends it, just above the bladder. The bladder is shown in the bladder explorer.",
   },
   {
     id: "right-renal-artery",
@@ -67,7 +72,8 @@ export const structures: readonly Structure[] = [
     color: "#bd514c",
     group: "Arterial supply",
     description:
-      "The right renal artery supplies the right kidney. The source concept combines its represented trunk and mapped branches into one selectable scene object.",
+      "Carries blood from the aorta to the right kidney. It is longer than the left artery and passes behind the inferior vena cava.",
+    note: "The aorta it branches from is not included, so the two arteries meet at the midline. Its branches are grouped with the trunk.",
   },
   {
     id: "left-renal-artery",
@@ -77,7 +83,8 @@ export const structures: readonly Structure[] = [
     color: "#cf6960",
     group: "Arterial supply",
     description:
-      "The left renal artery supplies the left kidney. Color is illustrative and is used to distinguish the arterial meshes from adjacent surfaces.",
+      "Carries blood from the aorta to the left kidney. It is shorter than the right artery because the aorta lies left of the midline.",
+    note: "The aorta it branches from is not included, so the two arteries meet at the midline. Its branches are grouped with the trunk.",
   },
 ] as const;
 
@@ -96,7 +103,7 @@ export const anatomyTree: readonly AnatomyNode[] = [
   },
   {
     id: "group-urinary-tract",
-    label: "Urinary tract · represented",
+    label: "Urinary tract",
     children: [
       { id: "right-ureter", label: "Right ureter" },
       { id: "left-ureter", label: "Left ureter" },
@@ -104,7 +111,7 @@ export const anatomyTree: readonly AnatomyNode[] = [
   },
   {
     id: "group-arterial-supply",
-    label: "Arterial supply · represented",
+    label: "Renal arteries",
     children: [
       { id: "right-renal-artery", label: "Right renal artery" },
       { id: "left-renal-artery", label: "Left renal artery" },
@@ -116,7 +123,7 @@ export const referenceUrl =
   "https://www.niddk.nih.gov/health-information/urologic-diseases/urinary-tract-how-it-works";
 
 export type ViewName =
-  "Anterior" | "Posterior" | "Patient left" | "Patient right";
+  "Anterior" | "Posterior" | "Left lateral" | "Right lateral";
 
 export const tour = [
   {
@@ -124,27 +131,27 @@ export const tour = [
     nodeId: "group-kidneys",
     view: "Anterior" as ViewName,
     isolate: false,
-    text: "Compare the paired kidney surfaces. Patient right appears on your left in the anterior view and sits slightly lower in this source body.",
+    text: "Compare the two kidneys from the front. The patient’s right kidney appears on your left and sits a little lower, below the liver.",
   },
   {
     title: "Posterior relationship",
     nodeId: "group-kidneys",
     view: "Posterior" as ViewName,
     isolate: true,
-    text: "From behind, the medial indentations face inward. Internal kidney structures are not represented by these surface meshes.",
+    text: "From behind, the hilum on each kidney’s inner border faces the spine. The kidneys rest against the muscles of the back wall of the abdomen.",
   },
   {
     title: "Ureter paths",
     nodeId: "group-urinary-tract",
     view: "Anterior" as ViewName,
     isolate: true,
-    text: "Follow the paired ureters downward. Their paths continue toward a bladder that is intentionally outside this model selection.",
+    text: "Follow each ureter down from the kidney. Stones most often lodge where it leaves the kidney, where it crosses into the pelvis, and where it enters the bladder.",
   },
   {
     title: "Arterial supply",
     nodeId: "group-arterial-supply",
     view: "Anterior" as ViewName,
     isolate: true,
-    text: "The represented renal artery elements approach the medial side of each kidney. They are grouped for the interface, not presented as kidney tissue.",
+    text: "Each renal artery enters its kidney at the hilum. The kidneys receive about a fifth of the blood the heart pumps.",
   },
 ] as const;

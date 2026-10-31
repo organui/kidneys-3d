@@ -183,11 +183,9 @@
   letter-spacing: -0.6px;
 }
 .brand-mark {
-  color: #9f4e45;
-  font-size: 15px;
-  letter-spacing: -5px;
-  margin-right: 5px;
-  transform: rotate(-8deg);
+  display: grid;
+  place-items: center;
+  margin-right: 3px;
 }
 .brand-light {
   font-weight: 500;
@@ -485,6 +483,11 @@
   font-size: 12px;
   line-height: 1.58;
 }
+.selection-card > p.structure-note {
+  margin-top: 6px;
+  color: var(--muted-ink);
+  font-size: 11px;
+}
 .source-id {
   font-family: ui-monospace, monospace;
   font-size: 9px !important;
@@ -608,7 +611,12 @@ footer {
   letter-spacing: 0.2px;
 }
 footer a {
-  text-decoration: underline;
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+footer a:hover {
+  color: var(--ink);
 }
 .about-dialog {
   width: min(520px, calc(100vw - 32px));
